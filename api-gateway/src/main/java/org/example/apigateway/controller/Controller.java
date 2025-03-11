@@ -12,6 +12,15 @@ public class Controller {
                 
                 Hello
                 
+                http://localhost:8080/auth
+                
+                http://localhost:8080/user
+                
+                http://localhost:8080/transaction
+                
+                http://localhost:8080/account
+                
+                
                 """;
     }
 }

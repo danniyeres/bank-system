@@ -17,8 +17,7 @@ The project consists of the following modules:
 
 ## Prerequisites
 
-- Java 11 or higher
-- Maven 3.6 or higher
+- Java 17 or higher
 - Docker and Docker Compose
 
 ## Getting Started

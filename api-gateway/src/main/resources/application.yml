@@ -10,6 +10,8 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/user/**
+          filters:
+            - AuthFilter
 
         - id: auth-service
           uri: http://localhost:8082
@@ -20,11 +22,15 @@ spring:
           uri: http://localhost:8083
           predicates:
               - Path=/account/**
+          filters:
+            - AuthFilter
 
         - id: transaction-service
           uri: http://localhost:8084
           predicates:
               - Path=/transaction/**
+          filters:
+            - AuthFilter
 
 server:
   port: 8080
