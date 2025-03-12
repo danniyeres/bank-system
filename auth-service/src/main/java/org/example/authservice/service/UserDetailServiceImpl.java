@@ -1,7 +1,7 @@
 package org.example.authservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.authservice.feign.UserFeign;
+import org.example.authservice.feign.UserClient;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
-    private final UserFeign repository;
+    private final UserClient repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
