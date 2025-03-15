@@ -29,7 +29,7 @@ public class AuthController {
                 http://localhost:8080/auth/login (POST)
                 // Login user
                 {
-                    "email": "email",
+                    "username": "username",
                     "password": "password"
                 }
                 

@@ -4,7 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.transactionservice.dto.AccountDto;
+import org.example.transactionservice.dto.UserDto;
 import org.example.transactionservice.feign.AccountClient;
+import org.example.transactionservice.feign.UserClient;
 import org.example.transactionservice.kafka.KafkaMessageProducer;
 import org.example.transactionservice.model.Transaction;
 import org.example.transactionservice.model.TransactionStatus;
@@ -20,12 +22,14 @@ import java.time.LocalDateTime;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountClient accountClient;
+    private final UserClient userClient;
     private final KafkaMessageProducer kafkaMessageProducer;
 
     @Transactional
     public void deposit(Long accountId, Double amount) {
 
-        var account = fromAccount(accountId);
+        var account = toAccount(accountId);
+        var user = toUser(account.getUserId());
 
         var transaction = Transaction.builder()
                 .toAccountId(account.getId())
@@ -41,7 +45,7 @@ public class TransactionService {
             accountClient.deposit(account.getId(), amount);
             transaction.setTransactionStatus(TransactionStatus.COMPLETED);
             log.info("Deposited {} to account {}", amount, account.getId());
-            kafkaMessageProducer.sendMessage("Deposited " + amount + " to account " + account.getId());
+            kafkaMessageProducer.sendMessage(user.getEmail()+",transaction,Deposited " + amount + " to account " + account.getId());
         } catch (Exception e) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             log.error("Error while depositing money", e);
@@ -54,6 +58,7 @@ public class TransactionService {
     @Transactional
     public void withdraw(Long accountId, Double amount) {
         var account = fromAccount(accountId);
+        var user = fromUser(account.getUserId());
         if (account.getBalance() < amount) {
             throw new IllegalStateException("Not enough money on account " + accountId);
         }
@@ -71,7 +76,7 @@ public class TransactionService {
             accountClient.withdraw(account.getId(), amount);
             transaction.setTransactionStatus(TransactionStatus.COMPLETED);
             log.info("Withdrawn {} from account {}", amount, account.getId());
-            kafkaMessageProducer.sendMessage("Withdrawn " + amount + " from account " + account.getId());
+            kafkaMessageProducer.sendMessage(user.getEmail()+",transaction,Withdrawal " + amount + " from " + account.getId());
         } catch (Exception e) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             log.error("Error while withdrawing money", e);
@@ -85,6 +90,8 @@ public class TransactionService {
     public void transfer(Long fromAccountId, Long toAccountId, Double amount) {
         var fromAccount = fromAccount(fromAccountId);
         var toAccount = toAccount(toAccountId);
+        var fromUser = fromUser(fromAccount.getUserId());
+        var toUser = toUser(toAccount.getUserId());
 
         if (fromAccount.getBalance() < amount) {
             throw new IllegalStateException("Not enough money on account " + fromAccountId);
@@ -105,7 +112,8 @@ public class TransactionService {
             accountClient.deposit(toAccount.getId(), amount);
             transaction.setTransactionStatus(TransactionStatus.COMPLETED);
             log.info("Transferred {} from account {} to account {}", amount, fromAccount.getId(), toAccount.getId());
-            kafkaMessageProducer.sendMessage("Transferred " + amount + " from account " + fromAccount.getId() + " to account " + toAccount.getId());
+            kafkaMessageProducer.sendMessage(toUser.getEmail()+",transaction,Transfer " + amount + " to " + fromAccount.getId());
+            kafkaMessageProducer.sendMessage(fromUser.getEmail()+",transaction,Transfer " + amount + " from " + toAccount.getId());
         } catch (Exception e) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             log.error("Error while transferring money", e);
@@ -127,5 +135,19 @@ public class TransactionService {
         if (account == null)
             throw new IllegalArgumentException("Account not found");
         return account;
+    }
+
+    private UserDto fromUser (Long userId) {
+        var user = userClient.findById(userId);
+        if (user == null)
+            throw new IllegalArgumentException("User not found");
+        return user;
+    }
+
+    private UserDto toUser (Long userId) {
+        var user = userClient.findById(userId);
+        if (user == null)
+            throw new IllegalArgumentException("User not found");
+        return user;
     }
 }

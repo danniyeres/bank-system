@@ -7,24 +7,24 @@ spring:
       routes:
 
         - id: user-service
-          uri: http://localhost:8081
+          uri: http://user-service:8081
           predicates:
             - Path=/user/**
 
         - id: auth-service
-          uri: http://localhost:8082
+          uri: http://auth-service:8082
           predicates:
               - Path=/auth/**
 
         - id: account-service
-          uri: http://localhost:8083
+          uri: http://account-service:8083
           predicates:
               - Path=/account/**
           filters:
             - AuthFilter
 
         - id: transaction-service
-          uri: http://localhost:8084
+          uri: http://transaction-service:8084
           predicates:
               - Path=/transaction/**
           filters:

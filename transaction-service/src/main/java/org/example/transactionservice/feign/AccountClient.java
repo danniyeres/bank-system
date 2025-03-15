@@ -7,21 +7,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "account-service", url = "http://localhost:8080", path = "/account")
+@FeignClient(name = "account-service")
 public interface AccountClient {
 
-    @GetMapping("/get/userId/{userId}")
+    @GetMapping("/account/get/userId/{userId}")
     AccountDto getAccountByUserId(@PathVariable Long userId);
 
-    @GetMapping("/get/username/{username}")
+    @GetMapping("/account/get/username/{username}")
     AccountDto getAccountByUsername(@PathVariable String username);
 
-    @GetMapping("/get/id/{id}")
+    @GetMapping("/account/get/id/{id}")
     AccountDto getAccountById(@PathVariable Long id) ;
 
-    @PostMapping("/deposit/{accountId}")
+    @PostMapping("/account/deposit/{accountId}")
     void deposit(@PathVariable Long accountId, @RequestParam double amount);
 
-    @PostMapping("/withdraw/{accountId}")
+    @PostMapping("/account/withdraw/{accountId}")
     void withdraw(@PathVariable Long accountId, @RequestParam double amount);
 }

@@ -11,18 +11,12 @@ spring:
       ddl-auto: create-drop
     show-sql: true
 
-  kafka:
-    bootstrap-servers: dummy:9092
-    producer:
-      retries: 0
-      batch-size: 16384
-      buffer-memory: 33554432
 
   cloud:
     openfeign:
       client:
         config:
-          default:
-            connect-timeout: 5000
-            read-timeout: 5000
-            logger-level: basic
+            default:
+                connect-timeout: 5000
+                read-timeout: 5000
+                logger-level: basic

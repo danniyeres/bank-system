@@ -1,6 +1,6 @@
-package org.example.accountservice.feign;
+package org.example.transactionservice.feign;
 
-import org.example.accountservice.dto.UserDto;
+import org.example.transactionservice.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

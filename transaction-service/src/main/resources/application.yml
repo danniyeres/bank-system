@@ -3,23 +3,36 @@ spring:
     name: transaction-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/bank_transaction
+    url: jdbc:postgresql://transaction_db:5432/bank_transaction
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
-        hibernate:
-            ddl-auto: update
-        show-sql: true
-        properties:
-            hibernate:
-            dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+          ddl-auto: update
+      show-sql: true
+      properties:
+          hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          account-service:
+            url: http://account-service:8083
+            connect-timeout: 5000
+            read-timeout: 5000
+          user-service:
+            url: http://user-service:8081
+            connect-timeout: 5000
+            read-timeout: 5000
 
 server:
   port: 8084
