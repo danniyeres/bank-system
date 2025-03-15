@@ -86,7 +86,7 @@ services:
       - microservices-network
 
   user_db:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: user_db
     environment:
       POSTGRES_DB: bank_user
@@ -100,7 +100,7 @@ services:
       - user_db_data:/var/lib/postgresql/data
 
   account_db:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: account_db
     environment:
       POSTGRES_DB: bank_account
@@ -114,7 +114,7 @@ services:
       - account_db_data:/var/lib/postgresql/data
 
   transaction_db:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: transaction_db
     environment:
       POSTGRES_DB: bank_transaction
